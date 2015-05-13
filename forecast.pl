@@ -1,13 +1,20 @@
-#!/usr/bin/perl -pls
+#!/usr/bin/perl -ls
 #Forecaster - граббер погоды с pogoda.yandex.ru
-#Версия 0.1.3 alpha
+#Author - viperserj (sj@404.pm)
+#
+#Версия 0.1.4
+#
 #Changelog:
-#0.1 - initial release
-#0.1.1 - Minor fixes :D
-#0.1.2 - Added wind, humidity, sunser and sunrise time, minor interface corrections
-#0.1.3 - Added forecast for nine more days, some formatting, fixed minor bugs
-#To-do: ввод города БЕЗ режима прямого ввода (forecast Saratov, к примеру); переключение ключей параметров вывода информации (к релизу 0.2a).
-system "curl -silent https://pogoda.yandex.ru/$_ -o \"tmp\"";
+#0.1 	- initial release.
+#0.1.1 	- Minor fixes.
+#0.1.2 	- Added wind, humidity, sunser and sunrise time, minor interface corrections.
+#0.1.3 	- Added forecast for nine more days, some formatting, fixed minor bugs.
+#0.1.4	- Added $0 <city> form, minor issues fixing.
+#
+#To-do: переключение ключей параметров вывода информации (к релизу 0.2a)
+$city = shift;
+if (not defined $city) {die "Usage: $0 <city_name>\n";}
+system "curl -silent https://pogoda.yandex.ru/$city -o \"tmp\"";
 $title = `egrep -o 'title_level_1">.*<\/h1>' ./tmp | cut -c16- | cut -d '<' -f 1`;
 $current = `egrep -o '_thermometer_type_now">.[0-9]*&thinsp;°C<\/div>' ./tmp | cut -c24- | cut -d '&' -f 1`;
 $after = `egrep -o '_thermometer_type_after">.[0-9]*<\/div>' ./tmp | cut -c26- | cut -d '<' -f 1`;
