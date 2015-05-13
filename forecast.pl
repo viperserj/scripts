@@ -24,6 +24,7 @@ $wind_d = `egrep -o 'title="Ветер:.*' ./tmp | cut -c20- | cut -d '"' -f 1`;
 $wind_s = `egrep -o 'Ветер: <\/span>(Штиль| [0-9]+,[0-9] м\/с)' ./tmp | cut -c20-`;
 $wind_d =~ s/\n//gi;
 $wind_s =~ s/\n//gi;
+$wind_s =~ s/ //i;
 if ($wind_s eq "Штиль") {$wind_d='';}
 $pressure = `egrep -o 'n>[0-9]* мм рт. ст.' ./tmp | cut -c3-`;
 $pressure =~ s/\n//gi;
