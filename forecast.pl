@@ -2,7 +2,7 @@
 #Forecaster - граббер погоды с pogoda.yandex.ru
 #Author - viperserj (sj@404.pm)
 #
-#Версия 0.1.4
+#Версия 0.1.5
 #
 #Changelog:
 #0.1 	- initial release.
@@ -10,6 +10,7 @@
 #0.1.2 	- Added wind, humidity, sunser and sunrise time, minor interface corrections.
 #0.1.3 	- Added forecast for nine more days, some formatting, fixed minor bugs.
 #0.1.4	- Added $0 <city> form, minor issues fixing.
+#0.1.5	- Fixed bug with 0m/s windspeed.
 #
 #To-do: переключение ключей параметров вывода информации (к релизу 0.2a)
 $city = shift;
@@ -20,9 +21,10 @@ $current = `egrep -o '_thermometer_type_now">.[0-9]*&thinsp;°C<\/div>' ./tmp | 
 $after = `egrep -o '_thermometer_type_after">.[0-9]*<\/div>' ./tmp | cut -c26- | cut -d '<' -f 1`;
 $comment = `egrep -o 'current-weather__comment">.[- абвгдеёжзиЙклмнопрстуфхцчшщЪыьэюя]*<\/span>' ./tmp | cut -c27- | cut -d '<' -f 1`;
 $wind_d = `egrep -o 'title="Ветер:.*' ./tmp | cut -c20- | cut -d '"' -f 1`;
-$wind_s = `egrep -o 'Ветер: <\/span> [0-9]+,[0-9] м\/с' ./tmp | cut -c21-`;
+$wind_s = `egrep -o 'Ветер: <\/span>(Штиль| [0-9]+,[0-9] м\/с)' ./tmp | cut -c20-`;
 $wind_d =~ s/\n//gi;
 $wind_s =~ s/\n//gi;
+if ($wind_s eq "Штиль") {$wind_d='';}
 $pressure = `egrep -o 'n>[0-9]* мм рт. ст.' ./tmp | cut -c3-`;
 $pressure =~ s/\n//gi;
 $humidity = `egrep -o 'n>[0-9]*%' ./tmp | cut -c3-`;
@@ -45,7 +47,7 @@ $comment =~ s/\n//i;
 $after =~ s/\n/°C\t/i;
 $after =~ s/\n/°C/i;
 print "$title\nСейчас \t\t$current, $comment\nВлажность: \t$humidity\nДавление: \t$pressure";
-print "Восход: \t$sunrise\nЗакат: \t\t$sunset\nВетер: \t\t$wind_s, $wind_d";
+print "Восход: \t$sunrise\nЗакат: \t\t$sunset\nВетер: \t\t$wind_s $wind_d";
 print "\nБлижайший прогноз\n+0ч\t+6ч\t+12ч\n$current\t$after";
 print "\nПрогноз на следующие 9 дней";
 print "Время\t$forecast_day";
