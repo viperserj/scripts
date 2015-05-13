@@ -17,6 +17,7 @@ $city = shift;
 if (not defined $city) {die "Usage: $0 <city_name>\n";}
 system "curl -silent https://pogoda.yandex.ru/$city -o \"tmp\"";
 $title = `egrep -o 'title_level_1">.*<\/h1>' ./tmp | cut -c16- | cut -d '<' -f 1`;
+if ($title eq "Такой страницы не существует\n") {die "Города нет в базе данных\n";}
 $current = `egrep -o '_thermometer_type_now">.[0-9]*&thinsp;°C<\/div>' ./tmp | cut -c24- | cut -d '&' -f 1`;
 $after = `egrep -o '_thermometer_type_after">.[0-9]*<\/div>' ./tmp | cut -c26- | cut -d '<' -f 1`;
 $comment = `egrep -o 'current-weather__comment">.[- абвгдеёжзиЙклмнопрстуфхцчшщЪыьэюя]*<\/span>' ./tmp | cut -c27- | cut -d '<' -f 1`;
