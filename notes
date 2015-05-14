@@ -1,0 +1,8 @@
+Forecaster - script to print upcoming week's forecast - checked
+Convert - converter between given units (miles to km, $ to EUR, etc)
+ConnectD - daemon that displays active connections and their uptime in some visually appearing manner
+Stinky - a script that finds large and old files/dirs on hdd and offers to delete them for you
+HeckIsThat - a script that checks browser history for questionable sites
+Buds - a script that scans irc logs and determines which users talk or emote with other
+Crap - a script that runs last command as sudo - checked (works for zsh now)
+WhatIsIt - script to check site's name and some stuff - yt_picker for now
