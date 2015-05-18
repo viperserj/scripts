@@ -11,16 +11,17 @@
 #0.1.3 	- Added forecast for nine more days, some formatting, fixed minor bugs.
 #0.1.4	- Added $0 <city> form, minor issues fixing.
 #0.1.5	- Fixed bug with 0m/s windspeed.
+#0.1.6	- Added russian input, minor issues fixed
 #
 #To-do: переключение ключей параметров вывода информации (к релизу 0.2a)
 $city = shift;
 if (not defined $city) {die "Usage: $0 <city_name>\n";}
-system "curl -silent https://pogoda.yandex.ru/$city -o \"tmp\"";
+system "curl -silent -L https://pogoda.yandex.ru/$city -o \"tmp\"";
 $title = `egrep -o 'title_level_1">.*<\/h1>' ./tmp | cut -c16- | cut -d '<' -f 1`;
 if ($title eq "Такой страницы не существует\n") {die "Города нет в базе данных\n";}
 $current = `egrep -o '_thermometer_type_now">.[0-9]*&thinsp;°C<\/div>' ./tmp | cut -c24- | cut -d '&' -f 1`;
 $after = `egrep -o '_thermometer_type_after">.[0-9]*<\/div>' ./tmp | cut -c26- | cut -d '<' -f 1`;
-$comment = `egrep -o 'current-weather__comment">.[- абвгдеёжзиЙклмнопрстуфхцчшщЪыьэюя]*<\/span>' ./tmp | cut -c27- | cut -d '<' -f 1`;
+$comment = `egrep -o 'current-weather__comment">[- абвгдеёжзиЙклмнопрстуфхцчшщЪыьэюя,]*<\/span>' ./tmp | cut -c27- | cut -d '<' -f 1`;
 $wind_d = `egrep -o 'title="Ветер:.*' ./tmp | cut -c20- | cut -d '"' -f 1`;
 $wind_s = `egrep -o 'Ветер: <\/span>(Штиль| [0-9]+,[0-9] м\/с)' ./tmp | cut -c20-`;
 $wind_d =~ s/\n//gi;
