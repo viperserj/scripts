@@ -16,6 +16,7 @@
 #To-do: переключение ключей параметров вывода информации (к релизу 0.2a)
 $city = shift;
 if (not defined $city) {die "Usage: $0 <city_name>\n";}
+$city=~s/ /-/gi;
 system "curl -silent -L https://pogoda.yandex.ru/$city -o \"tmp\"";
 $title = `egrep -o 'title_level_1">.*<\/h1>' ./tmp | cut -c16- | cut -d '<' -f 1`;
 if ($title eq "Такой страницы не существует\n") {die "Города нет в базе данных\n";}
