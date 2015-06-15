@@ -6,3 +6,4 @@ HeckIsThat - a script that checks browser history for questionable sites
 Buds - a script that scans irc logs and determines which users talk or emote with other
 Crap - a script that runs last command as sudo - checked (works for zsh now)
 WhatIsIt - script to check site's name and some stuff - yt_picker for now
+News - a script that fetches last news with links from lenta.ru
