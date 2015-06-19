@@ -30,7 +30,7 @@ $current = `egrep -o '_thermometer_type_now">.[0-9]+' ./tmp | cut -d '>' -f 2`;
 $after = `egrep -o '_thermometer_type_after">.[0-9]+' ./tmp | cut -d '>' -f 2`;
 $comment = `egrep -o 'current-weather__comment">[- а-я,]+' ./tmp | cut -d '>' -f 2`;
 $wind_d = `egrep -o 'title="Ветер:.*' ./tmp | cut -c20- | cut -d '"' -f 1`;
-$wind_s = `egrep -o 'Ветер: <\/span>(Штиль| [0-9]+,[0-9] м\/с)' ./tmp | cut -d '>' -f 2`;
+$wind_s = `egrep -o 'speed">(Штиль|[0-9]+,[0-9]+ м\/с)' ./tmp | cut -d '>' -f 2`;
 $pressure = `egrep -o 'n>[0-9]* мм рт. ст.' ./tmp | cut -d '>' -f 2`;
 $humidity = `egrep -o 'n>[0-9]*%' ./tmp | cut -d '>' -f 2`;
 $sunrise = `egrep -o 'д: <\/span>[0-9][0-9]:[0-9][0-9]' ./tmp | cut -d '>' -f 2`;
