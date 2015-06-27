@@ -20,8 +20,11 @@ my $wd = $xp->find('//fact/wind_direction/text()'); $wd =~ tr/nswe/СЮЗВ/;
 #	Вывод погоды
 print $xp->find('/*/@city'),', ',$xp->find('/*/@country'),"\n";
 print "Сейчас:\t\t",$xp->find('//fact/temperature/text()'),'°C, ',$xp->find('//fact/weather_type_short/text()');
+print "Влажность:\t",$xp->find('//fact/humidity/text()'),'%';
 print "Ветер:\t\t",$xp->find('//fact/wind_speed/text()'),"мс, $wd";
 print "Давление:\t",$xp->find('//fact/pressure/text()'),' мм рт.ст.';
+print "Восход:\t\t",$xp->find('//day[1]/sunrise/text()');
+print "Закат:\t\t",$xp->find('//day[1]/sunset/text()');
 exit 0;
 
 
