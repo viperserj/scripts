@@ -16,7 +16,8 @@ my $xp = XML::XPath->new(xml => $cities);
 my $id = $xp->find("/cities/country/city[text()='$city']/\@id");
 $city = get("http://export.yandex.ru/weather-ng/forecasts/$id.xml");
 $xp = XML::XPath->new(xml => $city);
-my $wd = $xp->find('//fact/wind_direction/text()'); $wd =~ tr/nswe/СЮЗВ/;
+my $wd = $xp->find('//fact/wind_direction/text()');# $wd =~ tr/nswe/↑↓←→/;
+$wd = arrow($wd);
 #	Вывод погоды
 print $xp->find('/*/@city'),', ',$xp->find('/*/@country'),"\n";
 print "Сейчас:\t\t",$xp->find('//fact/temperature/text()'),'°C, ',$xp->find('//fact/weather_type_short/text()');
@@ -25,6 +26,15 @@ print "Ветер:\t\t",$xp->find('//fact/wind_speed/text()'),"мс, $wd";
 print "Давление:\t",$xp->find('//fact/pressure/text()'),' мм рт.ст.';
 print "Восход:\t\t",$xp->find('//day[1]/sunrise/text()');
 print "Закат:\t\t",$xp->find('//day[1]/sunset/text()');
+
+#	Обработка данных подпрограммами
+
+sub arrow($) {
+	my $dir = shift;
+	my %a = ("n" => "↑","s"=>"↓","w"=>"←","e"=>"→","nw"=>"↖","ne"=>"↗","sw"=>"↙","se"=>"↘");
+	return $a{$dir};
+}
+
 exit 0;
 
 
