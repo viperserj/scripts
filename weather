@@ -1,0 +1,56 @@
+#!/usr/bin/perl -ls
+#	Погода 1.0 - погодный скрипт, основанный на Pogoda,Yandex API
+use strict;
+use LWP::Simple;
+use XML::XPath;
+use utf8;
+use Encode;
+
+binmode(STDOUT,':utf8');
+
+my $city = shift;
+if (not defined $city) {die "Использование: $0 <город>\n";}
+my $city = decode ('utf8', $city);
+my $cities = get('https://pogoda.yandex.ru/static/cities.xml') or die "404 - Невозможно получить список городов!\n";
+my $xp = XML::XPath->new(xml => $cities);
+my $id = $xp->find("/cities/country/city[text()='$city']/\@id");
+$city = get("http://export.yandex.ru/weather-ng/forecasts/$id.xml");
+$xp = XML::XPath->new(xml => $city);
+
+exit output();
+
+#	Вывод
+
+sub output() {
+	print $xp->find('/*/@city'),', ',$xp->find('/*/@country'),"\n";
+	print "Сейчас:\t",$xp->find('//fact/temperature/text()'),'°C, ',$xp->find('//fact/weather_type_short/text()');
+	print "Влаж.:\t",$xp->find('//fact/humidity/text()'),'%';
+	print "Ветер:\t",$xp->find('//fact/wind_speed/text()'),"мс(",arrow($xp->find('//fact/wind_direction/text()')),')';
+	print "Давл.:\t",$xp->find('//fact/pressure/text()'),' мм рт.ст.';
+	print "Восход:\t",$xp->find('//day[1]/sunrise/text()');
+	print "Закат:\t",$xp->find('//day[1]/sunset/text()');
+	print "\n",$xp->find('//day[2]/@date');
+	print "Утро\t|",$xp->find('//day[2]/day_part[1]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[2]/day_part[1]/wind_speed/text()'),"мс(",arrow($xp->find('//day[2]/day_part[1]/wind_direction/text()')),'), ',$xp->find('//day[2]/day_part[1]/weather_type_short/text()'),', ',$xp->find('//day[2]/day_part[1]/humidity/text()'),'%';
+	print "День\t|",$xp->find('//day[2]/day_part[2]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[2]/day_part[2]/wind_speed/text()'),"мс(",arrow($xp->find('//day[2]/day_part[2]/wind_direction/text()')),'), ',$xp->find('//day[2]/day_part[2]/weather_type_short/text()'),', ',$xp->find('//day[2]/day_part[2]/humidity/text()'),'%';
+	print "Вечер\t|",$xp->find('//day[2]/day_part[3]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[2]/day_part[3]/wind_speed/text()'),"мс(",arrow($xp->find('//day[2]/day_part[3]/wind_direction/text()')),'), ',$xp->find('//day[2]/day_part[3]/weather_type_short/text()'),', ',$xp->find('//day[2]/day_part[3]/humidity/text()'),'%';
+	print "Ночь\t|",$xp->find('//day[2]/day_part[4]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[2]/day_part[4]/wind_speed/text()'),"мс(",arrow($xp->find('//day[2]/day_part[4]/wind_direction/text()')),'), ',$xp->find('//day[2]/day_part[4]/weather_type_short/text()'),', ',$xp->find('//day[2]/day_part[4]/humidity/text()'),'%';
+	print "\n",$xp->find('//day[3]/@date');
+	print "Утро\t|",$xp->find('//day[3]/day_part[1]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[3]/day_part[1]/wind_speed/text()'),"мс(",arrow($xp->find('//day[3]/day_part[1]/wind_direction/text()')),'), ',$xp->find('//day[3]/day_part[1]/weather_type_short/text()'),', ',$xp->find('//day[3]/day_part[1]/humidity/text()'),'%';
+	print "День\t|",$xp->find('//day[3]/day_part[2]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[3]/day_part[2]/wind_speed/text()'),"мс(",arrow($xp->find('//day[3]/day_part[2]/wind_direction/text()')),'), ',$xp->find('//day[3]/day_part[2]/weather_type_short/text()'),', ',$xp->find('//day[3]/day_part[2]/humidity/text()'),'%';
+	print "Вечер\t|",$xp->find('//day[3]/day_part[3]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[3]/day_part[3]/wind_speed/text()'),"мс(",arrow($xp->find('//day[3]/day_part[3]/wind_direction/text()')),'), ',$xp->find('//day[3]/day_part[3]/weather_type_short/text()'),', ',$xp->find('//day[3]/day_part[3]/humidity/text()'),'%';
+	print "Ночь\t|",$xp->find('//day[3]/day_part[4]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[3]/day_part[4]/wind_speed/text()'),"мс(",arrow($xp->find('//day[3]/day_part[4]/wind_direction/text()')),'), ',$xp->find('//day[3]/day_part[4]/weather_type_short/text()'),', ',$xp->find('//day[3]/day_part[4]/humidity/text()'),'%';
+	print "\n",$xp->find('//day[4]/@date');
+	print "Утро\t|",$xp->find('//day[4]/day_part[1]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[4]/day_part[1]/wind_speed/text()'),"мс(",arrow($xp->find('//day[4]/day_part[1]/wind_direction/text()')),'), ',$xp->find('//day[4]/day_part[1]/weather_type_short/text()'),', ',$xp->find('//day[4]/day_part[1]/humidity/text()'),'%';
+	print "День\t|",$xp->find('//day[4]/day_part[2]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[4]/day_part[2]/wind_speed/text()'),"мс(",arrow($xp->find('//day[4]/day_part[2]/wind_direction/text()')),'), ',$xp->find('//day[4]/day_part[2]/weather_type_short/text()'),', ',$xp->find('//day[4]/day_part[2]/humidity/text()'),'%';
+	print "Вечер\t|",$xp->find('//day[4]/day_part[3]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[4]/day_part[3]/wind_speed/text()'),"мс(",arrow($xp->find('//day[4]/day_part[3]/wind_direction/text()')),'), ',$xp->find('//day[4]/day_part[3]/weather_type_short/text()'),', ',$xp->find('//day[4]/day_part[3]/humidity/text()'),'%';
+	print "Ночь\t|",$xp->find('//day[4]/day_part[4]/temperature-data/avg/text()'),"°C, ",$xp->find('//day[4]/day_part[4]/wind_speed/text()'),"мс(",arrow($xp->find('//day[4]/day_part[4]/wind_direction/text()')),'), ',$xp->find('//day[4]/day_part[4]/weather_type_short/text()'),', ',$xp->find('//day[4]/day_part[4]/humidity/text()'),'%';	
+	return 0;
+}
+
+#	Обработка данных
+
+sub arrow($) {
+	my $dir = shift;
+	my %a = ("n" => "↑","s"=>"↓","w"=>"←","e"=>"→","nw"=>"↖","ne"=>"↗","sw"=>"↙","se"=>"↘");
+	return $a{$dir};
+}
